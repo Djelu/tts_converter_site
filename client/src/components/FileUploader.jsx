@@ -6,7 +6,7 @@ const FileUploader = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const url = "http://185.253.7.239:5000";
+        const url = "http://185.253.7.239:5001";
 
         const formData = new FormData(event.target);
         formData.append("_BUFFER_SIZE", "20");
@@ -74,7 +74,7 @@ const FileUploader = () => {
             <form
                 id="file-upload"
                 method="post"
-                action="http://185.253.7.239:5000/tts_convert"
+                action="http://185.253.7.239:5001/tts_convert"
                 enctype="multipart/form-data"
                 onSubmit={handleSubmit}
             >
