@@ -12,5 +12,6 @@ services:
       - '3030:3000'
     environment:
       - NODE_ENV=development
+#    command: ["npm", "install", "styled-components"]
 volumes:
   node_modules:

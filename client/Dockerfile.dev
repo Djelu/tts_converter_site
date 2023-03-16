@@ -1,6 +1,11 @@
 FROM node:alpine
 WORKDIR /client
 COPY package.json .
+#RUN npm install styled-components
 RUN npm install
 COPY . .
-CMD ["npm", "start"]
+#CMD ["npm", "install", "styled-components"]
+#CMD ["npm", "start"]
+
+COPY script.sh /
+CMD ["/bin/bash", "/script.sh"]
