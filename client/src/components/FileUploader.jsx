@@ -8,14 +8,8 @@ const FileUploader = ({url}) => {
         event.preventDefault();
 
         const formData = new FormData(event.target);
-        // formData.append("_BUFFER_SIZE", "20");
-        // formData.append("_FIRST_STRINGS_LENGTH", "800");
-        // formData.append("_LAST_STRINGS_LENGTH", "4200");
-        // formData.append("_VOICE", "ru-RU-SvetlanaNeural");
-        // formData.append("_VOICE_RATE", "+100%");
-        // formData.append("_VOICE_VOLUME", "+0%");
-        const fileReader = new FileReader();
         const file = formData.get("file");
+        const fileReader = new FileReader();
         fileReader.readAsArrayBuffer(file);
 
         const interval = setInterval(checkStatus, 1000);
@@ -26,11 +20,10 @@ const FileUploader = ({url}) => {
             const totalChunks = Math.ceil(event.target.result.byteLength / chunkSize);
             const sendingId = Math.random().toString(36).slice(-6);
             let chunk_completed = 0;
-            // const fileName = /*Math.random().toString(36).slice(-6) +*/ file.name;
 
+            console.log(file.name)
             for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
                 let chunk = content.slice(chunkIndex * chunkSize, (chunkIndex + 1) * chunkSize)
-                // console.log(fileName)
                 const pars = {
                     "idx": chunkIndex,
                     "total": totalChunks,
@@ -67,7 +60,7 @@ const FileUploader = ({url}) => {
                     const url = window.URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.href = url;
-                    link.download = "audio.mp3";
+                    link.download = file.name+".mp3";
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -82,37 +75,6 @@ const FileUploader = ({url}) => {
 
             // status.innerHTML = `file ${fileUploaded} of ${files.files.length} uploaded!!!`;
         }
-
-        // fetch(`${url}/tts_convert`, {
-        //     method: "POST",
-        //     body: formData,
-        //     mode: "cors",
-        //     headers: {
-        //         Connection: "keep-alive",
-        //     },
-        // })
-        //     .then((response) => {
-        //         if (!response.ok) {
-        //             throw new Error("Network response was not ok");
-        //         }
-        //         return response.blob();
-        //     })
-        //     .then((blob) => {
-        //         setFileConverted(true);
-        //         const url = window.URL.createObjectURL(blob);
-        //         const link = document.createElement("a");
-        //         link.href = url;
-        //         link.download = "audio.mp3";
-        //         document.body.appendChild(link);
-        //         link.click();
-        //         document.body.removeChild(link);
-        //         window.URL.revokeObjectURL(url);
-        //     })
-        //     .catch((error) => {
-        //         console.error(error);
-        //     });
-
-
 
         function checkStatus() {
             if (fileConverted) {
