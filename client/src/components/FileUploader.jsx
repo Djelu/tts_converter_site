@@ -7,6 +7,7 @@ const FileUploader = ({url}) => {
     const [log, setLog] = useState("");
     const [fileList, setFileList] = useState([]);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [convertProgress, setConvertProgress] = useState(0);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [fileConverted, setFileConverted] = useState(false);
 
@@ -19,11 +20,11 @@ const FileUploader = ({url}) => {
     const handleFileUpload = (file) => {
         const fileReader = new FileReader();
         fileReader.readAsArrayBuffer(file);
-        const chunkSize = 1000;
+        const chunkSize = 10000;
         let chunkCompleted = 0;
         const totalChunks = Math.ceil(file.size / chunkSize);
-        const sendingId = Math.random().toString(36).slice(-6);
-        const interval = setInterval(checkStatus, 1000);
+        const sendingId = Date.now()/*Math.random().toString(36).slice(-6)*/;
+        const interval = setInterval(() => checkStatus(sendingId), 3000);
 
         for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
             const start = chunkIndex * chunkSize;
@@ -83,22 +84,23 @@ const FileUploader = ({url}) => {
                 });
         }
 
-        function checkStatus() {
+        function checkStatus(id) {
             if (fileConverted) {
                 clearInterval(interval);
                 return;
             }
-            fetch(`${url}/status`)
+            fetch(`${url}/status?id=${id}`)
                 .then((response) => {
                     if (!response.ok) {
                         return null;
                     }
-                    return response.text();
+                    return response.json();
                 })
-                .then((log) => {
-                    if (!log)
+                .then((json) => {
+                    if (!json)
                         return;
-                    setLog(log);
+                    setConvertProgress(json['progress'])
+                    setLog(json['log']);
                 })
                 .catch((error) => {
                     console.error("Error:", error);
@@ -121,8 +123,9 @@ const FileUploader = ({url}) => {
         <Container onDrop={handleDrop}>
             <LogContainer>
                 {/*{logs.map((log, index) => (*/}
-                    <div/* key={index}*/>{log}</div>
+                {/*    <div key={index}>{log}</div>*/}
                 {/*))}*/}
+                <textarea value={log}/>
             </LogContainer>
             <Header>Upload your files</Header>
             <FileDropZone>
@@ -144,6 +147,11 @@ const FileUploader = ({url}) => {
             {uploadProgress > 0 && (
                 <ProgressBarContainer>
                     <ProgressBar progress={uploadProgress}/>
+                </ProgressBarContainer>
+            )}
+            {convertProgress > 0 && (
+                <ProgressBarContainer>
+                    <ProgressBar progress={convertProgress}/>
                 </ProgressBarContainer>
             )}
 

@@ -82,7 +82,7 @@ export const ProgressBar = styled.div`
   height: 100%;
   background-color: #4caf50;
   border-radius: 5px;
-  width: ${(props) => props.uploadProgress}%;
+  width: ${(props) => props.progress}%;
 `;
 
 export const UploadedFilesContainer = styled.div`
