@@ -37,4 +37,4 @@ jobs:
           script: |
             cd /home/user1/services/tts_converter_site/client
             git pull
-            docker-compose -f '/home/user1/services/tts_converter_site/docker-compose.yaml' -f '/home/user1/services/tts_converter_site/docker-compose.prod.yaml' up &
+            docker-compose -f /home/user1/services/tts_converter_site/docker-compose.yaml -f /home/user1/services/tts_converter_site/docker-compose.prod.yaml up &
