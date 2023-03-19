@@ -1,73 +1,77 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
+import { LogContainer, ProgressBar, FileListItem, FileName, FileDropZone, FileList,
+    Container, DropMessage, Header, ProgressBarContainer, UploadButton, UploadStatus} from "./style.jsx";
 
 const FileUploader = ({url}) => {
     const [log, setLog] = useState("");
+    const [fileList, setFileList] = useState([]);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [convertProgress, setConvertProgress] = useState(0);
+    const [uploadedFiles, setUploadedFiles] = useState([]);
     const [fileConverted, setFileConverted] = useState(false);
 
-    const handleSubmit = (event) => {
+    const handleDrop = (event) => {
         event.preventDefault();
+        const files = Array.from(event.dataTransfer.files);
+        setFileList(files);
+    }
 
-        const formData = new FormData(event.target);
-        // formData.append("_BUFFER_SIZE", "20");
-        // formData.append("_FIRST_STRINGS_LENGTH", "800");
-        // formData.append("_LAST_STRINGS_LENGTH", "4200");
-        // formData.append("_VOICE", "ru-RU-SvetlanaNeural");
-        // formData.append("_VOICE_RATE", "+100%");
-        // formData.append("_VOICE_VOLUME", "+0%");
+    const handleFileUpload = (file) => {
         const fileReader = new FileReader();
-        const file = formData.get("file");
         fileReader.readAsArrayBuffer(file);
+        const chunkSize = 10000;
+        let chunkCompleted = 0;
+        const totalChunks = Math.ceil(file.size / chunkSize);
+        const sendingId = Date.now()/*Math.random().toString(36).slice(-6)*/;
+        const interval = setInterval(() => checkStatus(sendingId), 3000);
 
-        const interval = setInterval(checkStatus, 1000);
+        for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+            const start = chunkIndex * chunkSize;
+            const end = Math.min(file.size, start + chunkSize);
+            const chunk = file.slice(start, end);
+            const pars = {
+                "idx": chunkIndex,
+                "total": totalChunks,
+                "id": sendingId,
+                "bSize": "20",
+                "f": "800",
+                "l": "4200",
+                "v": "ru-RU-SvetlanaNeural",
+                "vR": "+100%",
+            }
+            const urlParams = new URLSearchParams(pars);
 
-        fileReader.onload = async (event) => {
-            const content = event.target.result;
-            const chunkSize = 1000;
-            const totalChunks = Math.ceil(event.target.result.byteLength / chunkSize);
-            const sendingId = Math.random().toString(36).slice(-6);
-            let chunk_completed = 0;
-            // const fileName = /*Math.random().toString(36).slice(-6) +*/ file.name;
-
-            for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-                let chunk = content.slice(chunkIndex * chunkSize, (chunkIndex + 1) * chunkSize)
-                // console.log(fileName)
-                const pars = {
-                    "idx": chunkIndex,
-                    "total": totalChunks,
-                    "id": sendingId,
-                    "bSize": "20",
-                    "f": "800",
-                    "l": "4200",
-                    "v": "ru-RU-SvetlanaNeural",
-                    "vR": "+100%",
-                    // "vV": "+0%"
-                }
-                const urlParams = new URLSearchParams(pars);
-
-                await fetch(`${url}/tts_convert?${urlParams}`, {
-                    'method' : 'POST',
-                    'headers' : {
-                        'content-type' : "application/octet-stream",
-                        'content-length' : chunk.length
-                    },
-                    'body' : chunk
-                }).then((res) => {
-                    if (res.status !== 200 || ++chunk_completed < totalChunks) {
-                        console.log("chunk = "+chunk_completed);
+            fetch(`${url}/tts_convert?${urlParams}`, {
+                'method': 'POST',
+                'headers': {
+                    'content-type': "application/octet-stream",
+                    'content-length': chunk.length
+                },
+                'body': chunk
+            })
+                .then((res) => {
+                    if (res.status !== 200) {
                         console.log(res);
                         return null;
                     }
-                    setFileConverted(true);
-                    console.log(res);
-                    return res.blob();
+                    chunkCompleted += 1;
+                    const progress = Math.round(100 * chunkCompleted / totalChunks);
+                    setUploadProgress(progress);
+                    console.log(`Uploaded ${progress}%`);
+                    if (chunkCompleted === totalChunks) {
+                        console.log("File uploaded");
+                        return res.blob();
+                    }
                 })
                 .then((blob) => {
                     if (!blob)
                         return;
+                    setFileConverted(true)
+                    setUploadedFiles((prevFiles) => [...prevFiles, blob]);
                     const url = window.URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.href = url;
-                    link.download = "audio.mp3";
+                    link.download = file.name + ".mp3";
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -77,58 +81,25 @@ const FileUploader = ({url}) => {
                     console.error(error);
                     clearInterval(interval);
                 });
-            }
-            // fileUploaded += 1;
-
-            // status.innerHTML = `file ${fileUploaded} of ${files.files.length} uploaded!!!`;
         }
 
-        // fetch(`${url}/tts_convert`, {
-        //     method: "POST",
-        //     body: formData,
-        //     mode: "cors",
-        //     headers: {
-        //         Connection: "keep-alive",
-        //     },
-        // })
-        //     .then((response) => {
-        //         if (!response.ok) {
-        //             throw new Error("Network response was not ok");
-        //         }
-        //         return response.blob();
-        //     })
-        //     .then((blob) => {
-        //         setFileConverted(true);
-        //         const url = window.URL.createObjectURL(blob);
-        //         const link = document.createElement("a");
-        //         link.href = url;
-        //         link.download = "audio.mp3";
-        //         document.body.appendChild(link);
-        //         link.click();
-        //         document.body.removeChild(link);
-        //         window.URL.revokeObjectURL(url);
-        //     })
-        //     .catch((error) => {
-        //         console.error(error);
-        //     });
-
-
-
-        function checkStatus() {
+        function checkStatus(id) {
             if (fileConverted) {
                 clearInterval(interval);
                 return;
             }
-            fetch(`${url}/status`)
+            fetch(`${url}/status?id=${id}`)
                 .then((response) => {
                     if (!response.ok) {
                         return null;
                     }
-                    return response.text();
+                    return response.json();
                 })
-                .then((log) => {
-                    if (!log) return;
-                    setLog(log);
+                .then((json) => {
+                    if (!json)
+                        return;
+                    setConvertProgress(json['progress'])
+                    setLog(json['log']);
                 })
                 .catch((error) => {
                     console.error("Error:", error);
@@ -136,23 +107,50 @@ const FileUploader = ({url}) => {
         }
     };
 
+    const handleFileSelect = (event) => {
+        event.preventDefault();
+        const files = Array.from(event.target.files);
+        setFileList(files);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        fileList.forEach(handleFileUpload);
+    };
+
     return (
-        <div>
-            <form
-                id="file-upload"
-                method="post"
-                action={url+"/tts_convert"}
-                enctype="multipart/form-data"
-                onSubmit={handleSubmit}
-            >
-                <label htmlFor="file-upload">Choose a file:</label>
-                <input type="file" id="file" name="file"/>
-                <button type="submit">Upload</button>
-            </form>
-            <div>
-                <textarea id="log" rows="10" cols="50" value={log} readOnly/>
-            </div>
-        </div>
+        <Container onDrop={handleDrop}>
+            <LogContainer>
+                <textarea value={log}/>
+            </LogContainer>
+            <Header>Upload your files</Header>
+            <FileDropZone>
+                <DropMessage>Drop your files here or click to browse</DropMessage>
+                <input type="file" id="file" name="file" onChange={handleFileSelect} multiple hidden/>
+                <UploadButton htmlFor="file">Browse</UploadButton>
+            </FileDropZone>
+            {fileList.length > 0 && (
+                <FileList>
+                    {fileList.map((file) => (
+                        <FileListItem key={file.name}>
+                            <FileName>{file.name}</FileName>
+                            <UploadStatus>{file.size} bytes</UploadStatus>
+                            <UploadButton onClick={() => handleFileUpload(file)}>Upload</UploadButton>
+                        </FileListItem>
+                    ))}
+                </FileList>
+            )}
+            {uploadProgress > 0 && (
+                <ProgressBarContainer>
+                    <ProgressBar progress={uploadProgress}/>
+                </ProgressBarContainer>
+            )}
+            {convertProgress > 0 && (
+                <ProgressBarContainer>
+                    <ProgressBar progress={convertProgress}/>
+                </ProgressBarContainer>
+            )}
+        </Container>
     );
 };
 
