@@ -2,8 +2,8 @@ version: '3.8'
 services:
   tts-converter-site:
     image: djelu/tts_converter_site
-    build:
-      dockerfile: Dockerfile.dev
+#    build:
+#      dockerfile: Dockerfile.dev
     container_name: tts-converter-site-container
     volumes:
       - './client:/client'
@@ -12,6 +12,5 @@ services:
       - '3030:3000'
     environment:
       - NODE_ENV=development
-#    command: ["npm", "install", "styled-components"]
 volumes:
   node_modules:
