@@ -40,14 +40,12 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          script: |
-            sudo apt-get update && sudo apt-get install -y curl
-            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-            su user1
-            docker pull djelu/tts_converter_site:latest
-            cd /home/user1/services/tts_converter_site
-            docker-compose -f ./docker-compose.yaml -f ./docker-compose.prod.yaml up
+          script: docker-compose -f /home/user1/services/tts_converter_site/docker-compose.yaml -f /home/user1/services/tts_converter_site/docker-compose.prod.yaml up
+#            sudo apt-get update && sudo apt-get install -y curl
+#            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#            sudo chmod +x /usr/local/bin/docker-compose
+#            docker pull djelu/tts_converter_site:latest
+#            docker-compose -f /home/user1/services/tts_converter_site/docker-compose.yaml -f /home/user1/services/tts_converter_site/docker-compose.prod.yaml up
 
 #      - name: Install Docker Compose
 #        run: |
