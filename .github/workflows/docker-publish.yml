@@ -35,6 +35,6 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd /home/user1/services/tts_converter_site
+            cd /home/user1/services/tts_converter_site/client
             git pull
             docker-compose -f '/home/user1/services/tts_converter_site/docker-compose.yaml' -f '/home/user1/services/tts_converter_site/docker-compose.prod.yaml' up &
