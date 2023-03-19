@@ -38,6 +38,7 @@ const FileUploader = ({url}) => {
                 "l": "4200",
                 "v": "ru-RU-SvetlanaNeural",
                 "vR": "+100%",
+                "ext": getFileExt(file.name)
             }
             const urlParams = new URLSearchParams(pars);
 
@@ -71,7 +72,7 @@ const FileUploader = ({url}) => {
                     const url = window.URL.createObjectURL(blob);
                     const link = document.createElement("a");
                     link.href = url;
-                    link.download = file.name + ".mp3";
+                    link.download = `${removeFileExt(file.name)}.mp3`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -81,6 +82,16 @@ const FileUploader = ({url}) => {
                     console.error(error);
                     clearInterval(interval);
                 });
+        }
+
+        function getFileExt(filename) {
+            const lastDotIndex = filename.lastIndexOf('.');
+            return lastDotIndex === -1 ? '' : filename.slice(lastDotIndex + 1);
+        }
+
+        function removeFileExt(filename) {
+            const lastDotIndex = filename.lastIndexOf('.');
+            return lastDotIndex === -1 ? filename : filename.slice(0, lastDotIndex);
         }
 
         function checkStatus(id) {

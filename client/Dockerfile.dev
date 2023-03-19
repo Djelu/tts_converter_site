@@ -1,7 +1,10 @@
 FROM node:alpine
+RUN apk update && apk add bash && apk add git
+
 WORKDIR /client
 COPY package.json .
 RUN npm install
 COPY . .
+
 COPY script.sh /
 CMD ["/bin/bash", "/script.sh"]
