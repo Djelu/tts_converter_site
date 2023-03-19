@@ -1,11 +1,7 @@
 FROM node:alpine
-COPY /client/package.json .
-#RUN npm install styled-components
-RUN apk update && apk add bash
+WORKDIR /client
+COPY package.json .
 RUN npm install
-COPY /client/. .
-#CMD ["npm", "install", "styled-components"]
-#CMD ["npm", "start"]
-
-COPY /client/script.sh /
+COPY . .
+COPY script.sh /
 CMD ["/bin/bash", "/script.sh"]
