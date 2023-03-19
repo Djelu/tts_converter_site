@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import { LogContainer, ProgressBar, FileListItem, FileName, FileDropZone, FileList,
-    Container, DropMessage, Header, ProgressBarContainer, UploadedFileItem,
-    UploadButton, UploadedFilesContainer, UploadedFilesList, DownloadButton, UploadStatus} from "./style.jsx";
+    Container, DropMessage, Header, ProgressBarContainer, UploadButton, UploadStatus} from "./style.jsx";
 
 const FileUploader = ({url}) => {
     const [log, setLog] = useState("");
@@ -122,9 +121,6 @@ const FileUploader = ({url}) => {
     return (
         <Container onDrop={handleDrop}>
             <LogContainer>
-                {/*{logs.map((log, index) => (*/}
-                {/*    <div key={index}>{log}</div>*/}
-                {/*))}*/}
                 <textarea value={log}/>
             </LogContainer>
             <Header>Upload your files</Header>
@@ -153,20 +149,6 @@ const FileUploader = ({url}) => {
                 <ProgressBarContainer>
                     <ProgressBar progress={convertProgress}/>
                 </ProgressBarContainer>
-            )}
-
-            {uploadedFiles.length > 0 && (
-                <UploadedFilesContainer>
-                    <Header>Uploaded Files</Header>
-                    <UploadedFilesList>
-                        {uploadedFiles.map((file) => (
-                            <UploadedFileItem key={file.name}>
-                                <FileName>{file.name}</FileName>
-                                <DownloadButton href={file.url} target="_blank">Download</DownloadButton>
-                            </UploadedFileItem>
-                        ))}
-                    </UploadedFilesList>
-                </UploadedFilesContainer>
             )}
         </Container>
     );
