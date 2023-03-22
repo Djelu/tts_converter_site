@@ -73,7 +73,7 @@ export const UploadStatus = styled.span`
 
 export const ProgressBarContainer = styled.div`
   width: 100%;
-  height: 20px;
+  height: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
 `;
