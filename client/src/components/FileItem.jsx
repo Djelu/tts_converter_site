@@ -1,20 +1,28 @@
-import React, {useState} from "react";
-import { LogContainer, ProgressBar, FileListItem, FileName, FileDropZone, FileList,
-    Container, DropMessage, Header, ProgressBarContainer, UploadButton, UploadStatus} from "./style.jsx";
+import React from "react";
+import {FileListItem, FileName, ProgressBar, ProgressBarContainer, UploadStatus, FileItemContainer} from "./style.jsx";
 
 const FileItem = ({file, uploadProgress, convertProgress, index}) => {
     const {name, size, status} = file
     const showProgress = true/*status !== null*/
-    const needChangeExt = name.endsWith(".fb2")
-    const rightName = needChangeExt
+    const rightName = name.endsWith(".fb2")
         ? `${name.replace(".fb2", ".txt")} (fb2 -> txt)`
         : name;
 
+    const getRightSizeValue = (size) => {
+        const sfx = ['Б', 'КБ', 'МБ'];
+        let sfxNum = 0;
+        while (size >= 1024 && sfxNum < sfx.length - 1) {
+            size /= 1024;
+            sfxNum++;
+        }
+        return `${Math.ceil(size)} ${sfx[sfxNum]}`;
+    }
+
     return (
-        <div>
+        <FileItemContainer>
             <FileListItem>
                 <FileName>{rightName}</FileName>
-                <UploadStatus>{size} bytes</UploadStatus>
+                <UploadStatus>{getRightSizeValue(size)}</UploadStatus>
             </FileListItem>
             {showProgress && (
                 <ProgressBarContainer>
@@ -26,7 +34,7 @@ const FileItem = ({file, uploadProgress, convertProgress, index}) => {
                     <ProgressBar progress={convertProgress}/>
                 </ProgressBarContainer>
             )}
-        </div>
+        </FileItemContainer>
     );
 };
 

@@ -24,20 +24,33 @@ export const Header = styled.h1`
 `;
 
 export const FileDropZone = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   border: 2px dashed #ccc;
-  width: 300px;
-  height: 200px;
-  margin-bottom: 20px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  width: 80%;
+  height: 25%;
 `;
 
 export const DropMessage = styled.p`
-  font-size: 18px;
-  color: #666;
+  font-size: 1.2rem;
 `;
+
+// export const FileDropZone = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   border: 2px dashed #ccc;
+//   width: 300px;
+//   height: 200px;
+//   margin-bottom: 20px;
+// `;
+
+// export const DropMessage = styled.p`
+//   font-size: 18px;
+//   color: #666;
+// `;
 
 export const UploadButton = styled.label`
   background-color: #4caf50;
@@ -46,13 +59,21 @@ export const UploadButton = styled.label`
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: 10px;
 `;
+
+export const FileItemContainer = styled.div`
+  margin-top: 15px;
+  border-radius: 5px;
+  border: 1px dotted green;
+  padding: 5px;
+`
 
 export const FileList = styled.ul`
   list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 300px;
+  //margin: 0;
+  padding: 0 0 20px 0;
+  width: 60%;
 `;
 
 export const FileListItem = styled.li`
@@ -85,19 +106,19 @@ export const ProgressBar = styled.div`
   width: ${(props) => props.progress}%;
 `;
 
-export const UploadedFilesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 50px;
-`;
+// export const UploadedFilesContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   margin-top: 50px;
+// `;
 
-export const UploadedFilesList = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 300px;
-`;
+// export const UploadedFilesList = styled.ul`
+//   list-style: none;
+//   margin: 0;
+//   padding: 0;
+//   width: 300px;
+// `;
 
 export const UploadedFileItem = styled.li`
   display: flex;

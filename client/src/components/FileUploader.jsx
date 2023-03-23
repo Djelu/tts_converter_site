@@ -11,6 +11,10 @@ const FileUploader = ({url}) => {
     // const [uploadedFiles, setUploadedFiles] = useState([]);
     // const [fileConverted, setFileConverted] = useState(false);
 
+    function handleDragOver(event) {
+        event.preventDefault();
+    }
+
     const handleDrop = (event) => {
         event.preventDefault();
         const files = [...event.dataTransfer.files]
@@ -159,18 +163,33 @@ const FileUploader = ({url}) => {
 
 
     return (
-        <Container onDrop={handleDrop}>
+        <Container /*onDrop={handleDropOver}*/>
             {/*<LogContainer>*/}
             {/*    <textarea value={log}/>*/}
             {/*</LogContainer>*/}
             {/*<Header>Upload your files</Header>*/}
-            <FileDropZone>
-                <DropMessage>Drop your files here or click to browse</DropMessage>
+            {/*<FileDropZone*/}
+            {/*    onDragover={(e) => {*/}
+            {/*        e.preventDefault();*/}
+            {/*    }}>*/}
+            {/*    <DropMessage>Drop your files here or click to browse</DropMessage>*/}
+            {/*    <input type="file" id="file" name="file" onChange={handleFileSelect} multiple hidden/>*/}
+            {/*    {fileList.length === 0 && (*/}
+            {/*        <UploadButton htmlFor="file">Загрузить файлы</UploadButton>*/}
+            {/*    )}*/}
+            {/*</FileDropZone>*/}
+
+            <FileDropZone
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+            >
+                <DropMessage>Здесь могли быть ваши книги</DropMessage>
                 <input type="file" id="file" name="file" onChange={handleFileSelect} multiple hidden/>
                 {fileList.length === 0 && (
                     <UploadButton htmlFor="file">Загрузить файлы</UploadButton>
                 )}
             </FileDropZone>
+
             {fileList.length > 0 && (
                 <UploadButton onClick={() => handleFileUpload(fileList)}>Озвучить все</UploadButton>
             )}
