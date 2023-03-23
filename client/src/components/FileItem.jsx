@@ -7,7 +7,7 @@ const FileItem = ({file, uploadProgress, convertProgress, workingState}) => {
     const rightName = name.endsWith(".fb2")
         ? `${name.replace(".fb2", ".txt")} (fb2 -> txt)`
         : name;
-    const wholeResultProgress = Math.floor(Math.ceil(uploadProgress*0.33+convertProgress*0.77)/2);
+    const wholeResultProgress = Math.floor(Math.ceil(uploadProgress*0.33+convertProgress*0.67));
 
     const getRightSizeValue = (size) => {
         const sfx = ['Б', 'КБ', 'МБ'];
@@ -19,13 +19,17 @@ const FileItem = ({file, uploadProgress, convertProgress, workingState}) => {
         return `${Math.ceil(size)} ${sfx[sfxNum]}`;
     }
 
+    const getRightPercent = () => {
+        return `${wholeResultProgress}%`
+    }
+
     return (
         <FileItemMainContainer>
             <WorkingState workingState={workingState}/>
             <FileItemSubContainer>
                 <FileListItem>
                     <FileName>{rightName}</FileName>
-                    <UploadStatus>{getRightSizeValue(size)}</UploadStatus>
+                    <UploadStatus>{getRightPercent(size)}</UploadStatus>
                 </FileListItem>
                 {showProgress && (
                     <ProgressBarContainer>
