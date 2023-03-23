@@ -56,7 +56,7 @@ const FileUploader = ({url}) => {
         const chunkSize = 10000;
         const totalChunks = Math.ceil(file.size / chunkSize);
         const sendingId = Date.now()
-        const interval = setInterval(() => checkStatus(sendingId), 1000);
+        const interval = setInterval(() => checkStatus(sendingId), 300);
         setWorkingState(prevState => prevState.map((value, i) => i === index ? "loading" : value))
 
         for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {

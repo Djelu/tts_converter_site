@@ -24,8 +24,10 @@ export const DropMessage = styled.p`
 `;
 
 export const UploadButton = styled.label`
-  background-color: #4caf50;
-  color: #fff;
+  background-color: lightgreen;
+  color: black;
+  //font-weight: ;
+  //font-style: italic;
   border: none;
   padding: 20px 30px;
   border-radius: 5px;
@@ -64,7 +66,6 @@ export const FileItemMainContainer = styled.div`
 `
 
 export const WorkingState = styled.div`
-    //display: ${props => props.workingState ?"inline-block" :"none"};
     display: inline-block;
     ${props => props.workingState === "completed" ?css`
       content: "\u2714";
@@ -83,7 +84,7 @@ export const WorkingState = styled.div`
       width: 20px;
       height: 20px;
       border: 2px solid #ccc;
-      border-top-color: #4caf50;
+      border-top-color: ${props => props.color};
       border-radius: 50%;
       animation: spin 1s linear infinite;
       @keyframes spin {
@@ -96,10 +97,10 @@ export const WorkingState = styled.div`
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      border: 2px solid red;
-      background-color: red;
+      border: 2px solid orangered;
+      background-color: orangered;
       text-align: center;
-      color: red;
+      color: orangered;
       font-weight: bold;
       font-size: 16px;
       line-height: 20px;
@@ -128,8 +129,14 @@ export const UploadStatus = styled.span`
   color: #666;
 `;
 
-export const ProgressBarContainer = styled.div`
+export const ProgressBarMainContainer = styled.div`
   width: 100%;
+  display: flex;
+`;
+
+export const ProgressBarContainer = styled.div`
+  display: inline-block;
+  width: ${props => props.size}%;
   height: 10px;
   border: 1px solid;
   border-color: ${props => props.progress > 0 ?"#ccc" :"white"};
@@ -138,7 +145,7 @@ export const ProgressBarContainer = styled.div`
 
 export const ProgressBar = styled.div`
   height: 100%;
-  background-color: #4caf50;
+  background-color: ${props => props.color ?props.color :"#ccc"};;
   border-radius: 5px;
   width: ${props => props.progress}%;
 `;
