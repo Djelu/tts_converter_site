@@ -1,6 +1,5 @@
 import React, {useState} from "react";
-import { LogContainer, ProgressBar, FileListItem, FileName, FileDropZone, FileList,
-    Container, DropMessage, Header, ProgressBarContainer, UploadButton, UploadStatus} from "./style.jsx";
+import {Container, DropMessage, FileDropZone, FileList, UploadButton} from "./style.jsx";
 import FileItem from "./FileItem";
 
 const FileUploader = ({url}) => {
@@ -8,8 +7,13 @@ const FileUploader = ({url}) => {
     const [fileList, setFileList] = useState([]);
     const [uploadProgress, setUploadProgress] = useState([]);
     const [convertProgress, setConvertProgress] = useState([]);
+    const [workingState, setWorkingState] = useState([]);
     // const [uploadedFiles, setUploadedFiles] = useState([]);
     // const [fileConverted, setFileConverted] = useState(false);
+
+    const handleClick = () => {
+        document.getElementById("file").click();
+    };
 
     function handleDragOver(event) {
         event.preventDefault();
@@ -17,25 +21,23 @@ const FileUploader = ({url}) => {
 
     const handleDrop = (event) => {
         event.preventDefault();
-        const files = [...event.dataTransfer.files]
-        setUploadProgress(Array(files.length).fill(0))
-        setConvertProgress(Array(files.length).fill(0))
-        setFileList(files);
+        setDefaultVarStates([...event.dataTransfer.files])
     }
 
     const handleFileSelect = (event) => {
         event.preventDefault();
-        const files = [...event.target.files];
-        setUploadProgress(Array(files.length).fill(0))
-        setConvertProgress(Array(files.length).fill(0))
-        setFileList(files);
+        setDefaultVarStates([...event.target.files]);
     };
 
+    const setDefaultVarStates = (files) => {
+        const newFiles = [...fileList, ...files]
+        setWorkingState(Array(newFiles.length).fill(null))
+        setUploadProgress(Array(newFiles.length).fill(0))
+        setConvertProgress(Array(newFiles.length).fill(0))
+        setFileList(newFiles);
+    }
+
     const handleFileUpload = async (fileList) => {
-        // for (const file of fileList) {
-        //     const index = fileList.indexOf(file);
-        //     fileUpload(file, index);
-        // }
         fileUpload(fileList, 0);
     }
 
@@ -45,15 +47,17 @@ const FileUploader = ({url}) => {
     };
 
     const fileUpload = (files, index) => {
-        // const fileReader = new FileReader();
-        // fileReader.readAsArrayBuffer(file);
+        if(workingState[index] === "completed")
+            return next_or_break();
+
         const file = files[index];
         let chunkCompleted = 0;
         let fileConverted = false;
         const chunkSize = 10000;
         const totalChunks = Math.ceil(file.size / chunkSize);
         const sendingId = Date.now()
-        const interval = setInterval(() => checkStatus(sendingId), 30000000);
+        const interval = setInterval(() => checkStatus(sendingId), 3000);
+        setWorkingState(prevState => prevState.map((value, i) => i === index ? "loading" : value))
 
         for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
             const start = chunkIndex * chunkSize;
@@ -101,6 +105,7 @@ const FileUploader = ({url}) => {
                     if (!blob)
                         return;
                     setConvertProgress(prevState => prevState.map((value, i) => i === index ? 100 : value))
+                    setWorkingState(prevState => prevState.map((value, i) => i === index ? "completed" : value))
                     fileConverted = true
                     // setUploadedFiles((prevFiles) => [...prevFiles, blob]);
                     const url = window.URL.createObjectURL(blob);
@@ -117,6 +122,7 @@ const FileUploader = ({url}) => {
                 .catch((error) => {
                     console.error(error);
                     clearInterval(interval);
+                    setWorkingState(prevState => prevState.map((value, i) => i === index ? "error" : value))
                     next_or_break();
                 })
         }
@@ -163,31 +169,20 @@ const FileUploader = ({url}) => {
 
 
     return (
-        <Container /*onDrop={handleDropOver}*/>
-            {/*<LogContainer>*/}
-            {/*    <textarea value={log}/>*/}
-            {/*</LogContainer>*/}
-            {/*<Header>Upload your files</Header>*/}
-            {/*<FileDropZone*/}
-            {/*    onDragover={(e) => {*/}
-            {/*        e.preventDefault();*/}
-            {/*    }}>*/}
-            {/*    <DropMessage>Drop your files here or click to browse</DropMessage>*/}
-            {/*    <input type="file" id="file" name="file" onChange={handleFileSelect} multiple hidden/>*/}
-            {/*    {fileList.length === 0 && (*/}
-            {/*        <UploadButton htmlFor="file">Загрузить файлы</UploadButton>*/}
-            {/*    )}*/}
-            {/*</FileDropZone>*/}
-
+        <Container>
             <FileDropZone
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
+                onClick={handleClick}
+                hasFiles={fileList.length > 0}
             >
-                <DropMessage>Здесь могли быть ваши книги</DropMessage>
-                <input type="file" id="file" name="file" onChange={handleFileSelect} multiple hidden/>
-                {fileList.length === 0 && (
-                    <UploadButton htmlFor="file">Загрузить файлы</UploadButton>
-                )}
+                {/*<FileDropZoneInnerConteiner>*/}
+                    <DropMessage hasFiles={fileList.length > 0}>Здесь могли быть ваши книги</DropMessage>
+                    <input type="file" id="file" name="file" onChange={handleFileSelect} multiple hidden/>
+                {/*</FileDropZoneInnerConteiner>*/}
+                {/*{fileList.length === 0 && (*/}
+                {/*    <UploadButton htmlFor="file">Загрузить файлы</UploadButton>*/}
+                {/*)}*/}
             </FileDropZone>
 
             {fileList.length > 0 && (
@@ -202,6 +197,7 @@ const FileUploader = ({url}) => {
                             index={index}
                             uploadProgress={uploadProgress[index]}
                             convertProgress={convertProgress[index]}
+                            workingState={workingState[index]}
                         />
                     ))}
                 </FileList>

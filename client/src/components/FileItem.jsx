@@ -1,12 +1,13 @@
 import React from "react";
-import {FileListItem, FileName, ProgressBar, ProgressBarContainer, UploadStatus, FileItemContainer} from "./style.jsx";
+import {FileItemSubContainer, FileItemMainContainer, FileListItem, FileName, ProgressBar, ProgressBarContainer, UploadStatus, WorkingState} from "./style.jsx";
 
-const FileItem = ({file, uploadProgress, convertProgress, index}) => {
-    const {name, size, status} = file
+const FileItem = ({file, uploadProgress, convertProgress, workingState}) => {
+    const {name, size} = file
     const showProgress = true/*status !== null*/
     const rightName = name.endsWith(".fb2")
         ? `${name.replace(".fb2", ".txt")} (fb2 -> txt)`
         : name;
+    const wholeResultProgress = Math.floor(Math.ceil(uploadProgress*0.33+convertProgress*0.77)/2);
 
     const getRightSizeValue = (size) => {
         const sfx = ['Б', 'КБ', 'МБ'];
@@ -19,22 +20,20 @@ const FileItem = ({file, uploadProgress, convertProgress, index}) => {
     }
 
     return (
-        <FileItemContainer>
-            <FileListItem>
-                <FileName>{rightName}</FileName>
-                <UploadStatus>{getRightSizeValue(size)}</UploadStatus>
-            </FileListItem>
-            {showProgress && (
-                <ProgressBarContainer>
-                    <ProgressBar progress={uploadProgress}/>
-                </ProgressBarContainer>
-            )}
-            {showProgress && (
-                <ProgressBarContainer>
-                    <ProgressBar progress={convertProgress}/>
-                </ProgressBarContainer>
-            )}
-        </FileItemContainer>
+        <FileItemMainContainer>
+            <WorkingState workingState={workingState}/>
+            <FileItemSubContainer>
+                <FileListItem>
+                    <FileName>{rightName}</FileName>
+                    <UploadStatus>{getRightSizeValue(size)}</UploadStatus>
+                </FileListItem>
+                {showProgress && (
+                    <ProgressBarContainer>
+                        <ProgressBar progress={wholeResultProgress}/>
+                    </ProgressBarContainer>
+                )}
+            </FileItemSubContainer>
+        </FileItemMainContainer>
     );
 };
 
