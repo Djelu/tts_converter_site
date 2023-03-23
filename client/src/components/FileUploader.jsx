@@ -30,7 +30,7 @@ const FileUploader = ({url}) => {
     };
 
     const setDefaultVarStates = (files) => {
-        const newFiles = [...fileList, ...files]
+        const newFiles = [...files, ...fileList]
         setWorkingState(Array(newFiles.length).fill(null))
         setUploadProgress(Array(newFiles.length).fill(0))
         setConvertProgress(Array(newFiles.length).fill(0))
@@ -45,6 +45,12 @@ const FileUploader = ({url}) => {
         event.preventDefault();
         fileList.forEach(handleFileUpload);
     };
+
+    const removeFile = (index) => {
+        let newFiles = [...fileList]
+        newFiles.splice(index, 1)
+        setFileList(newFiles);
+    }
 
     const fileUpload = (files, index) => {
         if(["completed", "loading"].includes(workingState[index]))
@@ -180,13 +186,12 @@ const FileUploader = ({url}) => {
                 onClick={handleClick}
                 hasFiles={fileList.length > 0}
             >
-                {/*<FileDropZoneInnerConteiner>*/}
-                    <DropMessage hasFiles={fileList.length > 0}>Здесь могли быть ваши книги</DropMessage>
-                    <input type="file" id="file" name="file" onChange={handleFileSelect} multiple hidden/>
-                {/*</FileDropZoneInnerConteiner>*/}
-                {/*{fileList.length === 0 && (*/}
-                {/*    <UploadButton htmlFor="file">Загрузить файлы</UploadButton>*/}
-                {/*)}*/}
+                <DropMessage hasFiles={fileList.length > 0}>
+                    {fileList.length === 0
+                        ?"Здесь могли быть ваши книги"
+                        :"Здесь всё ещё могут быть ваши книги"}
+                </DropMessage>
+                <input type="file" id="file" name="file" onChange={handleFileSelect} multiple hidden/>
             </FileDropZone>
 
             {fileList.length > 0 && (
@@ -202,6 +207,7 @@ const FileUploader = ({url}) => {
                             uploadProgress={uploadProgress[index]}
                             convertProgress={convertProgress[index]}
                             workingState={workingState[index]}
+                            removeFile={removeFile}
                         />
                     ))}
                 </FileList>

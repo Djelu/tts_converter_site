@@ -8,19 +8,19 @@ export const Container = styled.div`
 `;
 
 export const FileDropZone = styled.div`
-  border: 2px dashed #ccc;
+  border: 2px dashed lightgreen;
   padding: 30px;
   text-align: center;
   cursor: pointer;
   width: 80%;
-  height: ${props => props.hasFiles ?"150" :"250"}px;
+  height: ${props => props.hasFiles ?"150" :"700"}px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 export const DropMessage = styled.p`
-  font-size: ${props => props.hasFiles ?"1.2" :"1.5"}rem;
+  font-size: ${props => props.hasFiles ?"1.2" :"2"}rem;
 `;
 
 export const UploadButton = styled.label`
@@ -56,6 +56,7 @@ export const FileItemSubContainer = styled.div`
   border: 1px dotted grey;
   padding: 5px;
   margin-left: 10px;
+  margin-right: ${props => props.workingState === "loading" ?"23" :"10"}px;
   width: calc(100% - 50px);
 `;
 
@@ -63,6 +64,20 @@ export const FileItemMainContainer = styled.div`
   display: flex;
   align-items: center;
   margin-top: 15px;
+`
+
+export const RemoveButton = styled.div`
+  ::after{
+    content: "\u2716";
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    text-align: center;
+    color: orangered;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 20px;
+  }
 `
 
 export const WorkingState = styled.div`

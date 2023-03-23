@@ -1,10 +1,10 @@
 import React from "react";
 import {
-    FileItemSubContainer, FileItemMainContainer, FileListItem, FileName,
+    FileItemSubContainer, FileItemMainContainer, FileListItem, FileName, RemoveButton,
     ProgressBarMainContainer, ProgressBar, ProgressBarContainer, UploadStatus, WorkingState
 } from "./style.jsx";
 
-const FileItem = ({file, uploadProgress, convertProgress, workingState}) => {
+const FileItem = ({file, uploadProgress, convertProgress, workingState, removeFile, index}) => {
     const {name, size} = file
     const showProgress = true/*status !== null*/
     const rightName = name.endsWith(".fb2")
@@ -30,7 +30,7 @@ const FileItem = ({file, uploadProgress, convertProgress, workingState}) => {
     return (
         <FileItemMainContainer>
             <WorkingState workingState={workingState} color={loadingColor}/>
-            <FileItemSubContainer>
+            <FileItemSubContainer workingState={workingState}>
                 <FileListItem>
                     <FileName>{rightName}</FileName>
                     <UploadStatus>{getRightPercent(size)}</UploadStatus>
@@ -46,6 +46,9 @@ const FileItem = ({file, uploadProgress, convertProgress, workingState}) => {
                 </ProgressBarMainContainer>
                 )}
             </FileItemSubContainer>
+            {workingState !== "loading" && (
+                <RemoveButton onClick={() => removeFile(index)}/>
+            )}
         </FileItemMainContainer>
     );
 };
