@@ -21,7 +21,7 @@ jobs:
       - name: Build & push Docker image
         uses: mr-smithers-excellent/docker-build-push@v5
         with:
-          image: djelu/tts_converter_site
+          image: djelu/tts_converter_site:latest
           registry: docker.io
           dockerfile: client/Dockerfile.prod
           username: ${{ secrets.DOCKER_USERNAME }}
