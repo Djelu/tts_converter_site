@@ -53,13 +53,14 @@ const FileUploader = ({url}) => {
         const file = files[index];
         let chunkCompleted = 0;
         let fileConverted = false;
+        let wasError = false;
         const chunkSize = 10000;
         const totalChunks = Math.ceil(file.size / chunkSize);
         const sendingId = Date.now()
         const interval = setInterval(() => checkStatus(sendingId), 1000);
         setWorkingState(prevState => prevState.map((value, i) => i === index ? "loading" : value))
 
-        for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        for (let chunkIndex = 0; chunkIndex < totalChunks && !wasError; chunkIndex++) {
             const start = chunkIndex * chunkSize;
             const end = Math.min(file.size, start + chunkSize);
             const chunk = file.slice(start, end);
@@ -123,7 +124,10 @@ const FileUploader = ({url}) => {
                     console.error(error);
                     clearInterval(interval);
                     setWorkingState(prevState => prevState.map((value, i) => i === index ? "error" : value))
-                    next_or_break();
+                    if(!wasError){
+                        wasError = true
+                        next_or_break();
+                    }
                 })
         }
 
