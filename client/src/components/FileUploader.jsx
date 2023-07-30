@@ -105,12 +105,14 @@ const FileUploader = ({url}) => {
                     console.log(`Uploaded ${progress}%`);
                     if (chunkCompleted === totalChunks) {
                         console.log("File uploaded");
-                        return res.blob();
+                        return res.arrayBuffer();
                     }
                 })
-                .then((blob) => {
-                    if (!blob)
+                .then((buffer) => {
+                    if (!buffer)
                         return;
+                    let blob = new Blob([buffer], {type: "audio/mpeg"});
+
                     setConvertProgress(prevState => prevState.map((value, i) => i === index ? 100 : value))
                     setWorkingState(prevState => prevState.map((value, i) => i === index ? "completed" : value))
                     fileConverted = true
